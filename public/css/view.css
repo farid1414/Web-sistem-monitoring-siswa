@@ -1,0 +1,40 @@
+.form1 {
+    overflow: hidden;
+    font-family: "Merriweather", serif;
+}
+.judul {
+    margin-top: 50px;
+}
+label {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+input {
+    width: 60%;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    float: right;
+    font-size: 20px;
+    outline: none;
+}
+
+fieldset {
+    max-width: 350px;
+    background-color: rgb(30, 144, 2550, 0.3);
+    border: none;
+    border-radius: 10px;
+}
+.table2 {
+    float: right;
+    margin-top: -280px;
+}
+.judulatas {
+    font-family: "Noto Serif", serif;
+    font-size: 25px;
+    text-align: center;
+}

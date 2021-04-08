@@ -1,0 +1,42 @@
+.dashboard {
+    background-color: rgb(65, 105, 225, 0.9);
+    border-radius: 10px;
+    height: 100px;
+    width: 300px;
+    margin-left: 16rem;
+}
+
+.icon {
+    text-align: center;
+    position: relative;
+    margin-top: 10px;
+}
+.text {
+    color: white;
+    text-align: center;
+    margin-top: -80px;
+    margin-left: 30px;
+    font-size: 20px;
+    font-family: "Oswald", sans-serif;
+}
+.total {
+    color: white;
+    font-size: 35px;
+    margin-top: -10px;
+    margin-left: 30px;
+    text-align: center;
+    font-family: "Averia Serif Libre", cursive;
+}
+.judul {
+    text-align: center;
+    position: relative;
+}
+.tombol {
+    margin-top: 70px;
+    margin-left: 50px;
+    background-color: rgb(123, 104, 238, 0.7);
+    width: 30%;
+    text-align: center;
+    border-radius: 30px;
+    float: left;
+}

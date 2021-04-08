@@ -1,0 +1,33 @@
+form {
+    width: 500px;
+    margin: 10px auto;
+    float: right;
+}
+
+.search {
+    padding: 8px 5px;
+    background: #f0f8ff;
+    border: 2px solid #008080;
+    border-radius: 20px;
+    float: right;
+}
+
+.button {
+    position: relative;
+    padding: 10px 15px;
+    border: 0px solid #008080;
+    border-radius: 20px;
+    background-color: #6b8e23;
+    color: #fafafa;
+    font-weight: bold;
+    float: right;
+}
+
+.button:hover {
+    background: #008080;
+    color: #fafafa;
+}
+
+.button:active {
+    background: #9acd32;
+}
