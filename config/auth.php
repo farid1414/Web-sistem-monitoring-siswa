@@ -84,10 +84,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\admin::class,
         ],
-        'gurus' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\guru::class,
-        ],
     ],
 
     /*

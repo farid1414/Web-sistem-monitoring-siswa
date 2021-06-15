@@ -1,0 +1,21 @@
+.form2 {
+    overflow: hidden;
+    font-family: "Merriweather", serif;
+    margin-top: 20px;
+}
+label {
+    font-size: 25px;
+}
+input {
+    width: 85%;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+    float: right;
+    font-size: 40px;
+    outline: none;
+}
+.tabel {
+    text-align: center;
+}

@@ -1,0 +1,21 @@
+.table {
+    float: left;
+    margin-left: 10%;
+    padding: 10px;
+    background-color: rgb(255, 255, 255, 0.7);
+}
+td {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 8px;
+}
+th {
+    font-weight: bold;
+    font-size: 20px;
+}
+@media (min-width: 568px) {
+    th,
+    td {
+        word-break: keep-all;
+    }
+}

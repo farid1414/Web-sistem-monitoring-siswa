@@ -16,8 +16,18 @@ class User extends Authenticatable
         'name',
         'email',
         'level',
+        'kelas_id',
         'password',
     ];
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class,'kelas_id');
+    }
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class,'siswa_id');
+    }
 
 
     protected $hidden = [

@@ -19,15 +19,18 @@
                 {{csrf_field()}}
                 <label for="email" style="padding-top:13px">
                     Masukkan Email</label>
-                <input id="email" class="form-content" type="email" name="email" required />
+                <input id="email" class="form-content" type="email" name="email" value="{{old('email')}}" required />
                 <div class="form-border"></div>
                 <label for="password" style="padding-top:22px">Password
                 </label>
                 <input id="password" class="form-content" type="password" name="password" required />
                 <div class="form-border"></div>
                 <br>
-                <a href="/registrasi">Daftar akun orang tua</a>
+                <a href="/lupapassword" style="text-decoration:none;">
+                <legend id="forgot-pass">Lupa password?</legend>
+                </a>
                 <button type="submit" class="btn">LOGIN</button>
+                <a href="/registrasi" id="signup">Daftar akun orang tua</a>
             </form>
         </div>
     </div>

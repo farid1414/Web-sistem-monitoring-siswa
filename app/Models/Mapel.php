@@ -14,15 +14,19 @@ class Mapel extends Model
 
     public function kelas()
     {
-        return $this->belongsToMany(Kelas::class)->withPivot(['jam_pelajaran','hari']);
+        return $this->belongsToMany(Kelas::class)->withPivot(['jam_mulai','jam_selesai','hari']);
     }
 
     public function guru()
     {
-        return $this->belongsToMany(Guru::class);
+        return $this->belongsToMany(Guru::class)->withPivot(['hari','jam_mulai','jam_selesai','kelas']);
     }
     public function siswa()
     {
         return $this->belongsToMany(Siswa::class)->withPivot(['nilai','uts','uas','catatan']);
+    }
+    public function absen()
+    {
+        return $this->hasMany(Absen::class);
     }
 }

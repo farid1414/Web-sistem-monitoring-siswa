@@ -1,0 +1,125 @@
+html,
+body,
+div,
+table,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+footer,
+header,
+nav {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    outline: none;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html {
+    overflow-y: scroll;
+}
+::selection {
+    background: #5f74a0;
+    color: #fff;
+}
+::-moz-selection {
+    background: #5f74a0;
+    color: #fff;
+}
+::-webkit-selection {
+    background: #5f74a0;
+    color: #fff;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+#keywords {
+    margin: 0 auto;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+#keywords thead {
+    cursor: pointer;
+    background: #c9dff0;
+}
+#keywords thead tr th {
+    font-weight: bold;
+    padding: 10px 50px;
+    padding-left: 42px;
+}
+#keywords thead tr th span {
+    padding-right: 20px;
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+}
+
+#keywords thead tr th.headerSortUp,
+#keywords thead tr th.headerSortDown {
+    background: #acc8dd;
+}
+
+#keywords thead tr th.headerSortUp span {
+    background-image: url("https://i.imgur.com/SP99ZPJ.png");
+}
+#keywords thead tr th.headerSortDown span {
+    background-image: url("https://i.imgur.com/RkA9MBo.png");
+}
+
+#keywords tbody tr {
+    color: #555;
+}
+#keywords tbody tr td {
+    padding: 15px 10px;
+    font-family: "Orelega One", cursive;
+}
+#keywords tbody tr td.lalign {
+    text-align: left;
+}
+#wrapper {
+    display: block;
+    width: 80%;
+    background: #fff;
+    margin: 0 auto;
+    padding: 10px 17px;
+    -webkit-box-shadow: 2px 2px 3px -1px rgba(0, 0, 0, 0.35);
+    margin-top: 20px;
+}
+@import url("https://fonts.googleapis.com/css2?family=Orelega+One&display=swap");
+.judul {
+    margin-top: 10px;
+    font-size: 25px;
+    border: black solid 1px;
+    border: none;
+    border-radius: 10px;
+    width: 40%;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 40px;
+    background-color: white;
+    font-family: "Orelega One", cursive;
+}
+.judul-guru {
+    margin-top: 10px;
+    font-size: 20px;
+    border: black solid 1px;
+    border: none;
+    border-radius: 10px;
+    width: 50%;
+    font-weight: bold;
+    float: center;
+    margin-left: 40px;
+    background-color: white;
+    font-family: "Orelega One", cursive;
+}

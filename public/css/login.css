@@ -74,3 +74,19 @@ label {
     margin: -1.1rem auto 0 auto;
     width: 15rem;
 }
+#forgot-pass {
+    color: black;
+    font-family: "Raleway", sans-serif;
+    font-size: 10pt;
+    margin-top: 3px;
+    text-align: right;
+    text-decoration: none;
+}
+#signup {
+    color: black;
+    font-family: "Raleway", sans-serif;
+    font-size: 10pt;
+    margin-top: 16px;
+    text-align: center;
+    text-decoration: none;
+}

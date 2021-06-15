@@ -9,6 +9,10 @@ use App\Models\Siswa;
 use App\Models\Mapel;
 use App\Models\Kelas;
 use App\Models\gurukelas;
+use App\Exports\GuruExport;
+use App\Exports\SiswaExport;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 
 
@@ -23,21 +27,28 @@ class AdminController extends Controller
     {
         $data_tendik=\App\Models\Guru::all();
         $siswa=\App\Models\Siswa::all();
-        return view('/Admin/Homeadmin',['data_tendik'=>$data_tendik],['siswa'=>$siswa]);
-    }
-    public function loginadmin()
-    {
-        return view('/Admin/loginadmin');
+        $mapel=\App\Models\Mapel::all();
+        $kelas=\App\Models\Mapel::all();
+        $rating=\App\Models\Rating::all();
+        return view('/Admin/Homeadmin',['data_tendik'=>$data_tendik,'siswa'=>$siswa,'mapel'=>$mapel,'kelas'=>$kelas,'rating'=>$rating]);
     }
     // fungsi menu tendik
     public function dataguru(Request $request)
     {
-        if ($request->has('cari')) {
-            $data_guru = \App\Models\Guru::where('nama_tendik','LIKE', '%' . $request->cari . '%')->get();
-        } else {
-            $data_guru = \App\Models\Guru::all();
-        }
-        return view('/Admin/dataguru', ['data_guru' => $data_guru]);
+        $simplePaginate=10;
+
+        $data_guru = Guru::when($request->cari, function ($query) use ($request) {
+            $query ->where('nama_tendik', 'like', "%{$request->cari}%")
+            ->orWhere('nip', 'like', "%{$request->cari}%");
+        })->orderBy('tgl_diterima', 'asc')->simplePaginate($simplePaginate);
+    
+        $data_guru->appends($request->only('cari'));
+
+        return view('/Admin/dataguru', [
+            'nama_tendik'    => 'Guru',
+            'data_guru' => $data_guru,
+        ])->with('i', ($request->input('page', 1) - 1) * $simplePaginate);
+        
     }
     // fungsi tampil data tendik
     public function create(Request $request)
@@ -65,18 +76,19 @@ class AdminController extends Controller
         
         //input ke tabel user untuk login
         $user = new \App\Models\User;
-        $user->level ='siswa'; 
+        $user->level ='siswa';
+        $user->kelas_id=$request->kelas_id; 
         $user->name =$request->nama_lengkap;
         $user->email =$request->email;
         $user->password = bcrypt('siswa134');
         $user->remember_token = str_random(60);
         $user->save();
         
-        //insert ke tabel data_tendik
+
+        //insert ke tabel data siswa
         $request->request->add(['user_id' => $user->id]);
+        $request->request->add(['kelas_id'=> $user->kelas_id]);
         $siswa=\App\Models\Siswa::create($request->all());
-        // $guru->guru()->sync($request->input('guru', []));
-        // $guru->delivery_date = $request->input('delivery_date');
         return redirect('/Admin/datasiswa')->with('sukses', 'data berhasil');
     }
     // fungsi hapus data guru
@@ -114,9 +126,9 @@ class AdminController extends Controller
         return redirect('/Admin/dataguru')->with('sukses', 'data berhasil diupdate');
     }
     // fungsi untuk mengedit data siswa 
-    public function ubahsiswa(Request $request, $no_induk)
+    public function ubahsiswa(Request $request, $id)
     {
-        $data_siswa = \App\Models\Siswa::find($no_induk);
+        $data_siswa = \App\Models\Siswa::find($id);
         $data_siswa->Update($request->all());
         return redirect('/Admin/datasiswa')->with('sukses', 'data berhasil diupdate');
     }
@@ -124,12 +136,21 @@ class AdminController extends Controller
     // fungsi untuk menampilkan data siswa
     public function datasiswa(Request $request)
     {
-        if ($request->has('mencari')) {
-            $data_siswa = \App\Models\Siswa::where('nama_lengkap', 'LIKE', '%' . $request->mencari . '%')->get();
-        } else {
-            $data_siswa = \App\Models\Siswa::all();
-        }
-        return view('/Admin/datasiswa', ['data_siswa' => $data_siswa]);
+        $simplePaginate=10;
+
+        $data_siswa = Siswa::when($request->mencari, function ($query) use ($request) {
+            $query ->where('nama_lengkap', 'like', "%{$request->mencari}%")
+            ->orWhere('no_induk', 'like', "%{$request->mencari}%");
+        })->orderBy('no_induk', 'asc')->simplePaginate($simplePaginate);
+    
+        $data_siswa->appends($request->only('mencari'));
+        $data_kelas =\App\Models\Kelas::all();
+
+        return view('/Admin/datasiswa', [
+            'nama_lengkap' => 'Siswa',
+            'data_siswa' => $data_siswa,
+            'data_kelas' =>$data_kelas,
+        ])->with('i', ($request->input('page', 1) - 1) * $simplePaginate);
     }
     //fungsi untuk menampilkan data mata pelajaran
     public function datamatapelajaran()
@@ -153,40 +174,139 @@ class AdminController extends Controller
     public function datakelas()
     {
         $data_kelas=\App\Models\Kelas::all();
-        return view('/Admin/datakelas',['data_kelas'=> $data_kelas]);
+        $guru =\App\Models\Guru::all();
+        return view('/Admin/datakelas',['data_kelas'=> $data_kelas,'guru'=>$guru]);
+    }
+    // fungsi untuk tambah kelas
+    public function createkelas(Request  $request)
+    {
+        Kelas::create([
+            'nama_kelas'=>$request->nama_kelas,
+            'wali_kelas'=>$request->wali_kelas,
+        ]);
+        return redirect('/Admin/datakelas')->with('sukses','kelas berhasil ditambahkan');
+    }
+    // fungsi untuk ubah kelas
+    public function ubahkelas(Request  $request,  $id)
+    {
+        $data_kelas = \App\Models\Kelas::find($id);
+        $data_kelas->Update($request->all());
+        return redirect('/Admin/datakelas')->with('sukses','kelas berhasil diubah');
+    }
+     // fungsi edit Kelas
+     public function editkelas($id)
+     {
+         $data_kelas = \App\Models\Kelas::find($id);
+         $guru=\App\Models\Guru::all();
+         return view('/Admin/editkelas', ['data_kelas' => $data_kelas,'guru'=>$guru]);
+     }
+ 
+    // fungsi untuk hapus kelas
+    public function deletekelas($id)
+    {
+        $data_kelas = \App\Models\Kelas::find($id);
+        $data_kelas->delete($data_kelas);
+        return redirect('Admin/datakelas')->with('sukses', 'data berhasil dihapus');
     }
     
-    // fungsi untuk edit data wali kelas
-    // public function editwalikelas(){
-        //     $data_wali = \App\Models\::find($id);
-        //     return view('/Admin/edit', ['data_tendik' => $data_tendik]);
-        // }
-        // fungsi untuk menampilakn data user 
-        public function datauser()
+    // fungsi untuk menampilakn data user 
+        public function datauser(Request $request)
         {
-            $data_user=\App\Models\User::all();
-            return view('/Admin/datauser',['data_user'=> $data_user]);
+            
+        $simplePaginate=10;
+
+        $data_user = User::when($request->cari, function ($query) use ($request) {
+            $query ->where('name', 'like', "%{$request->cari}%")
+            ->orWhere('level', 'like', "%{$request->cari}%");
+        })->orderBy('level', 'desc')->simplePaginate($simplePaginate);
+    
+        $data_user->appends($request->only('cari'));
+
+        return view('/Admin/datauser', [
+            'name'    => 'User',
+            'data_user' => $data_user,
+        ])->with('i', ($request->input('page', 1) - 1) * $simplePaginate);
+
         }
-        // fungsi untuk menampilkan data wali kelas
-        public function datawalikelas()
-        {
-            $data_wali=\App\Models\gurukelas::all();
-            return view('/Admin/datawalikelas',['data_wali'=> $data_wali]);
-        }
-        
-        // fungsi buat data wali kelas
-        public function buatwalikelas(Request $request){
-             \App\Models\gurukelas::create($request->all());
-             return redirect('Admin/datawalikelas')->with('sukses', 'data wali kelas berhasil ditambahkan');
-         }
         //  fungsi menampilkan data jadwal pelajaran 
          public function datajadwalpelajaran(){
              $data_kelas=\App\Models\Kelas::all();
              return view('/Admin/datajadwalpelajaran',['data_kelas'=>$data_kelas]);
-         }
-        //  fungsu menampilkan jadwal guru mengajar
+        }
+        //  fungsi menampilkan view jadwal pelajaran 
+         public function viewjadwal($id){
+             $data_kelas =\App\Models\Kelas::find($id);
+             $mapel=\App\Models\Mapel::all();
+             return view('/Admin/viewjadwal',['data_kelas'=>$data_kelas,'mapel'=>$mapel]);
+        }
+        //funsi untuk hapus jadwal pelajaran
+        public function hapusjadwal($id, $idmapel)
+        {
+        $kelas=\App\Models\Kelas::find($id);
+        $kelas->mapel()->detach($idmapel);
+
+        return redirect()->back()->with('hapus', 'Jadwal berhasil dihapuss');
+        } 
+         
+         // fungsi untuk menambahkan jadwal pada siswa
+         public function addjadwal(Request $request ,$id)
+        {
+             $kelas=\App\Models\Kelas::find($id);
+             $kelas->mapel()->attach($request->mapel,['jam_mulai'=> $request->jam_mulai,'jam_selesai'=> $request->jam_selesai,'hari'=> $request->hari]);
+             
+             return redirect('Admin/'.$id.'/viewjadwal');
+        }
+        
+        //  fungsi menampilkan view jadwal guru mengajar 
+        
+        public function viewjadwalguru($id){
+            $data_guru =\App\Models\Guru::find($id);
+            $data_mapel=\App\Models\Mapel::all();
+            $kelas=\App\Models\Kelas::all();
+            return view('/Admin/viewjadwalguru',['data_guru'=>$data_guru,'data_mapel'=>$data_mapel,'kelas'=>$kelas]);
+        }
+
+        // fungsi untuk menambahkan jadwal mengajar guru
+        public function addjadwalguru(Request $request ,$id)
+        {
+            $guru=\App\Models\Guru::find($id);
+            $guru->mapel()->attach($request->mapel,['jam_mulai'=> $request->jam_mulai,'jam_selesai'=> $request->jam_selesai,'hari'=> $request->hari,'kelas'=>$request->kelas]);
+            
+            return redirect('Admin/'.$id.'/viewjadwalguru')->with('sukses','jadwal mengajar berhasil ditambahkan');
+        }
+        //funsi untuk hapus jadwal guru
+        public function hapusjadwalguru($id, $idmapel)
+        {
+        $guru=\App\Models\Guru::find($id);
+        $guru->mapel()->detach($idmapel);
+
+        return redirect()->back()->with('hapus', 'Jadwal berhasil dihapuss');
+        }
+        
+        //  fungsi menampilkan jadwal guru mengajar
          public function datajadwalguru(){
              $data_guru=\App\Models\Guru::all();
              return view('/Admin/datajadwalguru',['data_guru'=>$data_guru]);
-         }
+        }
+        // fungsi untuk eksport data guru
+        public function export() 
+        {
+        return Excel::download(new GuruExport, 'guru.xlsx');
+        }
+        // fungsi untuk eksport data siswa
+        public function exportsiswa() 
+        {
+        return Excel::download(new SiswaExport, 'siswa.xlsx');
+        }
+
+        // fungsi untuk menampilkan datarating 
+        public function datarating()
+        {
+            
+            $rating =\App\Models\Rating::all();
+
+            return view('/Admin/datarating',['rating'=>$rating]);
+            
+        }
+
     }

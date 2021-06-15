@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/Guru/{id}/nilaisiswa',[ApiController::class,'nilaisiswa']);
 
 
 // Route::get('/cache', function() { $exitCode = Artisan::call('config:clear'); $exitCode = Artisan::call('cache:clear'); $exitCode = Artisan::call('config:cache'); return 'DONE'; return $request->user });
